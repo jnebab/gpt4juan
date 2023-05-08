@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
 
     const chatPrompt = ChatPromptTemplate.fromPromptMessages([
       SystemMessagePromptTemplate.fromTemplate(
-        "You are a helpful assistant that answers questions as best you can. If the question is about web development, respond in a markdown format. When you are sending in a markdown format, make sure the code block starts after two lines. If the question is about something else, respond in a plain text format."
+        "You are a helpful assistant that answers questions as best you can. If the question is about web development or is needed to be formatted in table, respond in a markdown format. When you are sending in a markdown format, make sure the code block starts after two lines. If the question is about something else, respond in a plain text format."
       ),
       new MessagesPlaceholder("history"),
       HumanMessagePromptTemplate.fromTemplate("{input}"),
