@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
       prompt: chatPrompt,
       llm,
     });
-    await chain.call({ input: query }).catch(console.error);
+    chain.call({ input: query }).catch(console.error);
 
     return new NextResponse(stream.readable, {
       headers: {
