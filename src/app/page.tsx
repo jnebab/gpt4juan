@@ -1,7 +1,11 @@
+/* eslint-disable react/no-children-prop */
 "use client";
 import { KeyboardEvent, useEffect, useState, useTransition } from "react";
 import { BotIcon, User2Icon } from "lucide-react";
 import classNames from "classnames";
+import ReactMarkdown from "react-markdown";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { dark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 type Message = {
   index: number;
@@ -133,7 +137,43 @@ function Message({ message, role }: MessageProps) {
       )}
     >
       <div className="w-8">{role === "ai" ? <BotIcon /> : <User2Icon />}</div>
-      <p className="flex flex-wrap">{message}</p>
+      <p className="flex flex-wrap">
+        <ReactMarkdown
+          components={{
+            code({ node, inline, className, children, ...props }) {
+              const match = /language-(\w+)/.exec(className || "");
+              return !inline && match ? (
+                <SyntaxHighlighter
+                  {...props}
+                  children={String(children).replace(/\n$/, "")}
+                  style={dark}
+                  language={match[1]}
+                  PreTag="div"
+                />
+              ) : (
+                <code {...props} className={className}>
+                  {children}
+                </code>
+              );
+            },
+          }}
+        >
+          {message}
+        </ReactMarkdown>
+      </p>
     </li>
+  );
+}
+
+type CodeBlockProps = {
+  language: string;
+  value: string;
+};
+
+function CodeBlock({ value, language }: CodeBlockProps) {
+  return (
+    <SyntaxHighlighter language={language} style={dark}>
+      {value}
+    </SyntaxHighlighter>
   );
 }
