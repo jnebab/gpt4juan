@@ -12,13 +12,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
-type RequestType = {
-  query: string;
-};
-
 export async function POST(req: NextRequest) {
   const { query } = await req.json();
-  let str = "";
   try {
     if (!OPENAI_API_KEY) {
       throw new Error("OPENAI_API_KEY is not set");
@@ -30,8 +25,8 @@ export async function POST(req: NextRequest) {
 
     const llm = new ChatOpenAI({
       openAIApiKey: OPENAI_API_KEY,
-      model: "gpt-4",
-      temperature: 0.7,
+      modelName: "gpt-4",
+      temperature: 0.2,
       streaming: true,
       callbackManager: CallbackManager.fromHandlers({
         handleLLMNewToken: async (token) => {
@@ -57,7 +52,11 @@ export async function POST(req: NextRequest) {
       HumanMessagePromptTemplate.fromTemplate("{input}"),
     ]);
     const chain = new ConversationChain({
-      memory: new BufferMemory({ returnMessages: true, memoryKey: "history" }),
+      memory: new BufferMemory({
+        returnMessages: true,
+        memoryKey: "history",
+        inputKey: "input",
+      }),
       prompt: chatPrompt,
       llm,
     });
@@ -66,18 +65,11 @@ export async function POST(req: NextRequest) {
     return new NextResponse(stream.readable, {
       headers: {
         "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache",
+        "Cache-Control": "no-cache, no-transform",
+        Connection: "keep-alive",
       },
     });
   } catch (error) {
     console.log("error:", error);
   }
-
-  return new Response(str, {
-    headers: {
-      "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache, no-transform",
-      Connection: "keep-alive",
-    },
-  });
 }
