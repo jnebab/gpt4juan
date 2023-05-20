@@ -1,11 +1,14 @@
-/* eslint-disable react/no-children-prop */
 "use client";
-import { KeyboardEvent, useEffect, useState, useTransition } from "react";
+import {
+  KeyboardEvent,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import { BotIcon, User2Icon } from "lucide-react";
 import classNames from "classnames";
 import ReactMarkdown from "react-markdown";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { dark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 type Message = {
   index: number;
@@ -18,6 +21,16 @@ export default function Home() {
   const [userMessage, setUserMessage] = useState("");
   const [aiMessage, setAIMessage] = useState<Message | undefined>(undefined);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [isGenerating, setIsGenerating] = useState<boolean>(false);
+  const readerRef = useRef<ReadableStreamDefaultReader>();
+
+  const lastMessageRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (lastMessageRef.current) {
+      lastMessageRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   useEffect(() => {
     if (aiMessage) {
@@ -51,6 +64,7 @@ export default function Home() {
           { index: messages.length + 1, role: "human", message: userMessage },
         ]);
         setUserMessage("");
+        setIsGenerating(true);
       });
 
       const res = await fetch("/api", {
@@ -64,16 +78,17 @@ export default function Home() {
       });
 
       const reader = res.body!.getReader();
+      readerRef.current = reader;
       const decoder = new TextDecoder("utf-8");
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) {
+          setIsGenerating(false);
           setAIMessage(undefined);
           break;
         }
         const decodedValue = decoder.decode(value);
-        // console.log("messages:", messages);
 
         let newAIMessage = undefined;
         if (aiMessage) {
@@ -94,6 +109,11 @@ export default function Home() {
     }
   };
 
+  const handleAbort = () => {
+    setIsGenerating(false);
+    readerRef.current?.cancel();
+  };
+
   return (
     <div className="flex flex-col gap-6 w-full overflow-hidden">
       <div>
@@ -109,8 +129,18 @@ export default function Home() {
             />
           );
         })}
+        <div ref={lastMessageRef}></div>
       </ul>
       <div className="fixed bottom-0 py-10 bg-white h-[150px] w-full right-0 left-0 z-20 flex justify-center items-end">
+        {isGenerating ? (
+          <button
+            type="button"
+            className="absolute right-0 left-0 -top-4 bg-neutral-700 text-white w-[220px] mx-auto rounded text-sm py-2 px-3 hover:bg-neutral-800"
+            onClick={handleAbort}
+          >
+            Stop Generating
+          </button>
+        ) : null}
         <input
           className="form-input rounded shadow w-[1100px] h-14"
           placeholder="Send a message"
@@ -138,42 +168,8 @@ function Message({ message, role }: MessageProps) {
     >
       <div className="w-8">{role === "ai" ? <BotIcon /> : <User2Icon />}</div>
       <p className="flex flex-wrap">
-        <ReactMarkdown
-          components={{
-            code({ node, inline, className, children, ...props }) {
-              const match = /language-(\w+)/.exec(className || "");
-              return !inline && match ? (
-                <SyntaxHighlighter
-                  {...props}
-                  children={String(children).replace(/\n$/, "")}
-                  style={dark}
-                  language={match[1]}
-                  PreTag="div"
-                />
-              ) : (
-                <code {...props} className={className}>
-                  {children}
-                </code>
-              );
-            },
-          }}
-        >
-          {message}
-        </ReactMarkdown>
+        <ReactMarkdown>{message}</ReactMarkdown>
       </p>
     </li>
-  );
-}
-
-type CodeBlockProps = {
-  language: string;
-  value: string;
-};
-
-function CodeBlock({ value, language }: CodeBlockProps) {
-  return (
-    <SyntaxHighlighter language={language} style={dark}>
-      {value}
-    </SyntaxHighlighter>
   );
 }
