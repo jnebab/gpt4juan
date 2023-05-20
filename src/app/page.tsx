@@ -1,3 +1,4 @@
+/* eslint-disable react/no-children-prop */
 "use client";
 import {
   KeyboardEvent,
@@ -9,6 +10,9 @@ import {
 import { BotIcon, User2Icon } from "lucide-react";
 import classNames from "classnames";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { dark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 type Message = {
   index: number;
@@ -91,6 +95,7 @@ export default function Home() {
         const decodedValue = decoder.decode(value);
 
         let newAIMessage = undefined;
+
         if (aiMessage) {
           newAIMessage = {
             ...aiMessage,
@@ -103,7 +108,7 @@ export default function Home() {
             message: decodedValue,
           };
         }
-
+        console.log("aiMessage:", newAIMessage);
         setAIMessage(newAIMessage as Message);
       }
     }
@@ -142,7 +147,7 @@ export default function Home() {
           </button>
         ) : null}
         <input
-          className="form-input rounded shadow w-[1100px] h-14"
+          className="form-input rounded shadow w-[1100px] h-14 px-3"
           placeholder="Send a message"
           value={userMessage}
           onChange={(e) => setUserMessage(e.target.value)}
@@ -168,7 +173,30 @@ function Message({ message, role }: MessageProps) {
     >
       <div className="w-8">{role === "ai" ? <BotIcon /> : <User2Icon />}</div>
       <p className="flex flex-wrap">
-        <ReactMarkdown>{message}</ReactMarkdown>
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          className="flex flex-col gap-2"
+          components={{
+            code({ node, inline, className, children, ...props }) {
+              const match = /language-(\w+)/.exec(className || "");
+              return !inline && match ? (
+                <SyntaxHighlighter
+                  {...props}
+                  children={String(children).replace(/\n$/, "")}
+                  style={dark}
+                  language={match[1]}
+                  PreTag="section"
+                />
+              ) : (
+                <code {...props} className={className}>
+                  {children}
+                </code>
+              );
+            },
+          }}
+        >
+          {message}
+        </ReactMarkdown>
       </p>
     </li>
   );

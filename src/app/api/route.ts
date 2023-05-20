@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
 
     const chatPrompt = ChatPromptTemplate.fromPromptMessages([
       SystemMessagePromptTemplate.fromTemplate(
-        "You are a helpful assistant that answers questions as best you can. Always be polite and helpful and provide all answers in markdown format."
+        "You are a helpful assistant that answers questions as best you can. Provide all answers in markdown format and if you're writing a code please make sure wrap the code inside a typescript code block that can be appriopriately formatted in an mdx format"
       ),
       new MessagesPlaceholder("history"),
       HumanMessagePromptTemplate.fromTemplate("{input}"),
