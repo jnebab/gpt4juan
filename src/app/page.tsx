@@ -1,9 +1,9 @@
-"use client";
-import { useEffect } from "react";
+import { SignIn } from "@clerk/nextjs";
 
-export default function Home() {
-  useEffect(() => {
-    window.location.href = "/sign-in";
-  });
-  return <div />;
+export default function Page() {
+  return (
+    <div className="pt-20">
+      <SignIn />
+    </div>
+  );
 }

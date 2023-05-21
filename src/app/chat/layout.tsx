@@ -6,7 +6,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <body className="w-full h-full min-h-screen overflow-auto">
+    <main>
       <header className="z-20 px-5 shadow-xs flex h-16 items-center justify-between bg-white text-dark w-screen max-w-full sticky top-0">
         <div className="px-5">
           <h3 className="font-bold text-xl text-neutral-800">TotalGPT4</h3>
@@ -22,6 +22,6 @@ export default function RootLayout({
         <div className="h-5" />
         {children}
       </div>
-    </body>
+    </main>
   );
 }
