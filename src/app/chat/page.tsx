@@ -165,7 +165,7 @@ function Message({ message, role }: MessageProps) {
   return (
     <li
       className={classNames(
-        "font-mono text-black p-4 w-full flex items-center gap-4 rounded relative odd:bg-gray even:bg-white"
+        "font-mono text-black p-4 w-full flex items-start gap-4 rounded relative odd:bg-gray even:bg-white"
       )}
     >
       <div className="w-8">{role === "ai" ? <BotIcon /> : <User2Icon />}</div>
