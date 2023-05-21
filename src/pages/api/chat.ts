@@ -1,19 +1,19 @@
+import { CallbackManager } from "langchain/callbacks";
 import { ConversationChain } from "langchain/chains";
 import { ChatOpenAI } from "langchain/chat_models/openai";
-import { CallbackManager } from "langchain/callbacks";
+import { BufferMemory } from "langchain/memory";
 import {
   ChatPromptTemplate,
   HumanMessagePromptTemplate,
   MessagesPlaceholder,
   SystemMessagePromptTemplate,
 } from "langchain/prompts";
-import { BufferMemory } from "langchain/memory";
 import { NextRequest, NextResponse } from "next/server";
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-
-export async function POST(req: NextRequest) {
+const handler = async (req: NextRequest) => {
   const { query } = await req.json();
+
   try {
     if (!OPENAI_API_KEY) {
       throw new Error("OPENAI_API_KEY is not set");
@@ -72,4 +72,10 @@ export async function POST(req: NextRequest) {
     console.log("error:", error);
     throw error;
   }
-}
+};
+
+export const config = {
+  runtime: "edge",
+};
+
+export default handler;

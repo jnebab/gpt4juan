@@ -51,7 +51,6 @@ export default function Home() {
           }
           return msg;
         });
-        // console.log("updatedMessages:", updatedMessages);
         setMessages(updatedMessages);
       } else {
         setMessages([...messages, aiMessage]);
@@ -71,7 +70,7 @@ export default function Home() {
         setIsGenerating(true);
       });
 
-      const res = await fetch("/api", {
+      const res = await fetch("/api/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -83,17 +82,19 @@ export default function Home() {
 
       const reader = res.body!.getReader();
       readerRef.current = reader;
+
       const decoder = new TextDecoder("utf-8");
 
       while (true) {
         const { done, value } = await reader.read();
+
         if (done) {
           setIsGenerating(false);
           setAIMessage(undefined);
           break;
         }
-        const decodedValue = decoder.decode(value);
 
+        const decodedValue = decoder.decode(value);
         let newAIMessage = undefined;
 
         if (aiMessage) {
@@ -108,7 +109,6 @@ export default function Home() {
             message: decodedValue,
           };
         }
-
         setAIMessage(newAIMessage as Message);
       }
     }
