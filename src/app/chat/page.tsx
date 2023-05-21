@@ -121,9 +121,6 @@ export default function Home() {
 
   return (
     <div className="flex flex-col gap-6 w-full overflow-hidden">
-      <div>
-        <h3 className="font-bold text-neutral-700">Conversation</h3>
-      </div>
       <ul className="flex flex-col gap-4 overflow-y-auto pb-28 -z-1 flex-wrap overflow-x-scroll md:max-w-screen-lg">
         {messages?.map((msg, index) => {
           return (

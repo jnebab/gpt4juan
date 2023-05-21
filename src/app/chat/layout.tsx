@@ -9,9 +9,9 @@ export default function RootLayout({
     <main>
       <header className="z-20 px-5 shadow-xs flex h-16 items-center justify-between bg-white text-dark w-screen max-w-full sticky top-0">
         <div className="px-5">
-          <h3 className="font-bold text-xl text-neutral-800">TotalGPT4</h3>
+          <h3 className="font-bold text-xl text-neutral-800">GPT4Juan</h3>
           <p className="text-xs text-neutral-800">
-            Your all-around AI assistant
+            The AI assistant for every juan
           </p>
         </div>
         <div>

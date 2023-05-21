@@ -9,6 +9,11 @@ export default authMiddleware({
       signInUrl.searchParams.set("redirect_url", req.url);
       return NextResponse.redirect(signInUrl);
     }
+    if (auth.userId && req.nextUrl.pathname === "/") {
+      const chatUrl = new URL("/chat", req.url);
+      chatUrl.searchParams.set("redirect_url", req.url);
+      return NextResponse.redirect(chatUrl);
+    }
   },
 });
 
