@@ -25,9 +25,8 @@ export async function POST(req: NextRequest) {
 
     const llm = new ChatOpenAI({
       openAIApiKey: OPENAI_API_KEY,
-      // modelName: "gpt-4",
-      maxTokens: 1024,
-      temperature: 0.2,
+      modelName: "gpt-4",
+      temperature: 0,
       streaming: true,
       callbackManager: CallbackManager.fromHandlers({
         handleLLMNewToken: async (token) => {
@@ -71,5 +70,6 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     console.log("error:", error);
+    throw error;
   }
 }

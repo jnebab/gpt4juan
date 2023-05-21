@@ -108,7 +108,7 @@ export default function Home() {
             message: decodedValue,
           };
         }
-        console.log("aiMessage:", newAIMessage);
+
         setAIMessage(newAIMessage as Message);
       }
     }
