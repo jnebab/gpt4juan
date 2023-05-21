@@ -6,9 +6,9 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "TotalGPT | Your all-around AI assistant",
+  title: "GPT4Juan | The AI assistant for every juan",
   description:
-    "A GPT-powered web app featuring pre-made assistant roles, providing tailored support for specific user needs in real-time.",
+    "A GPT4-powered app featuring pre-made assistant roles, providing tailored support for specific user needs",
 };
 
 export default function RootLayout({
