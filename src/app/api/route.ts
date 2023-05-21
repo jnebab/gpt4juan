@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
 
     const llm = new ChatOpenAI({
       openAIApiKey: OPENAI_API_KEY,
-      modelName: "gpt-4",
+      // modelName: "gpt-4",
       maxTokens: 1024,
       temperature: 0.2,
       streaming: true,
