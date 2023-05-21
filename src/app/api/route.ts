@@ -26,6 +26,7 @@ export async function POST(req: NextRequest) {
     const llm = new ChatOpenAI({
       openAIApiKey: OPENAI_API_KEY,
       modelName: "gpt-4",
+      maxTokens: 1024,
       temperature: 0.2,
       streaming: true,
       callbackManager: CallbackManager.fromHandlers({
@@ -65,7 +66,6 @@ export async function POST(req: NextRequest) {
     return new NextResponse(stream.readable, {
       headers: {
         "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache, no-transform",
         Connection: "keep-alive",
       },
     });
