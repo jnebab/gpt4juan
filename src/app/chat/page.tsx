@@ -7,12 +7,25 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { dark } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { useRef } from "react";
+import { use, useEffect, useRef } from "react";
 
 export default function Home() {
-  const { messages, input, handleInputChange, handleSubmit, stop, isLoading } =
-    useChat();
+  const {
+    messages,
+    reload,
+    input,
+    handleInputChange,
+    handleSubmit,
+    stop,
+    isLoading,
+  } = useChat();
   const lastMessageRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (lastMessageRef.current && messages?.length > 0) {
+      lastMessageRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   return (
     <div className="flex flex-col gap-6 w-full overflow-hidden">
@@ -46,6 +59,14 @@ export default function Home() {
             onChange={handleInputChange}
           />
         </form>
+        {!isLoading && messages?.length > 0 ? (
+          <button
+            onClick={reload}
+            className="absolute right-0 left-0 -top-4 bg-neutral-700 text-white w-[220px] mx-auto rounded text-sm py-2 px-3 hover:bg-neutral-800"
+          >
+            Regenerate Response
+          </button>
+        ) : null}
       </div>
     </div>
   );
